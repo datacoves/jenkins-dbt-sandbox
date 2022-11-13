@@ -1,0 +1,17 @@
+services:
+  jenkins:
+    container_name: "datacoves-jenkins"
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    environment:
+      - JAVA_OPTS=-Dhudson.security.csrf.GlobalCrumbIssuerConfiguration.DISABLE_CSRF_PROTECTION=True
+    volumes:
+    - ./jenkins_home:/var/jenkins_home
+    restart: on-failure
+    ports:
+    - "8080:8080"
+    - "50000:50000"
+networks:
+  default:
+      name: "datacoves-jenkins"
