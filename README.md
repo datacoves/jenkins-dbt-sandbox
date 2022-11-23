@@ -29,13 +29,13 @@ dbt `Jenkinsfile` pipeline without requiring:
     -   `ssh-keygen`, then hit "Return" three times
     -   Copy the key to your host computer. You'll have to enter your host password.
 
-        -   Mac: `ssh-copy-id YOUR_HOST_USER_NAME@docker.for.mac.localhost`
-        -   Linux: `ssh-copy-id YOUR_HOST_USER_NAME@localhost`
+        -   Mac: `ssh-copy-id <YOUR_MAC_USER_NAME>@docker.for.mac.localhost`
+        -   Linux: `ssh-copy-id <YOUR_LINUX_USER_NAME>@localhost`
 
     -   Verify you can log into the host
 
-        -   Mac: `ssh YOUR_HOST_USER_NAME@docker.for.mac.localhost`
-        -   Linux: `ssh YOUR_HOST_USER_NAME@localhost`
+        -   Mac: `ssh <YOUR_MAC_USER_NAME>@docker.for.mac.localhost`
+        -   Linux: `ssh <YOUR_LINUX_USER_NAME>@localhost`
 
 -   Initial core Jenkins setup
 
@@ -95,22 +95,26 @@ dbt `Jenkinsfile` pipeline without requiring:
           -   In the "SCM" dropdown, select "git".
           -   In the "Repository URL" field, enter (you'll need to change the host user name and PROJECT_DIR based on where the repo with Jenkinsfile is located on the host)
 
-              -   Mac: `YOUR_HOST_USER_NAME@docker.for.mac.localhost:PROJECT_DIR/.git`
-              -   Linux: `YOUR_HOST_USER_NAME@localhost:PROJECT_DIR/.git`
+              -   Mac: `<YOUR_MAC_USER_NAME>@docker.for.mac.localhost:PROJECT_DIR/.git`
+              -   Linux: `<YOUR_LINUX_USER_NAME>@localhost:PROJECT_DIR/.git`
 
-          -   If your Jenkinsfile requires credentials, configure them under the section titled "Credentials" by clicking "Add" and selecting "Jenkins". Jenkins supports many kinds of credentials, but the most commonly used is "Username with password". If that's what you need, select it and fill out the "Username", "Password", and "ID" fields. The ID must match the credentialsId specified in the Jenkinsfile withCredentials() call. When you've filled out those fields, click "Add".
+          -   The sample Jenkinsfile in this repo requires two credentials because we have steps that use `withCredentials` so we need to add two users.
+              -   Under the section titled "Credentials" click "Add"
+                - username: git, password: anything, id: git-user
+                - username: svc-jenkins, password: anything, id: jenkins-snowflake-creds
+
+              -   in general, if your Jenkinsfile requires credentials, configure them under the section titled "Credentials" by clicking "Add" and selecting "Jenkins". Jenkins supports many kinds of credentials, but the most commonly used is "Username with password". If that's what you need, select it and fill out the "Username", "Password", and "ID" fields. The ID must match the credentialsId specified in the Jenkinsfile withCredentials() call. When you've filled out those fields, click "Add".
+
           -   In the Script Path field, accept the default (`Jenkinsfile`)
           -   Under "Branches to build", "Branch Specifier (blank for 'any')", enter the name of the branch you want to build, e.g. "main". If the branch name doesn't exist in the repo, builds will fail with a somewhat confusing error (see below).
           - Click "Save"
 
- 
+
                  hudson.plugins.git.GitException: Command "git fetch --tags --force --progress --prune -- origin +refs/heads/master:refs/remotes/origin/master" returned status code 128:
                  stdout:
                  stderr: fatal: couldn't find remote ref refs/heads/master
                  fatal: the remote end hung up unexpectedly
 
-
--   If necessary, add credentials for the build.
 -   Run the Jenkins build pipeline
 
     -   Click "Build Now"
@@ -121,4 +125,4 @@ dbt `Jenkinsfile` pipeline without requiring:
 
     -   You can make changes to the repo on the host, then commit those changes and click "Build Now" to run another build. You don't need to "git push", because Jenkins is pulling the code directly from the host.
     -   You can make changes to the Build Pipeline by clicking "Configure". This will display the same screen you used earlier when creating the build pipeline.
-    -   To view the nicer "Blue Ocean" pipeline output, go to <http://localhost:8080/blue>, then click on your build pipeline.
+    -   To view the nicer "Blue Ocean" pipeline output, click on the Open Blue Ocean link.

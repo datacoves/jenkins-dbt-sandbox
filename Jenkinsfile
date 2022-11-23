@@ -19,6 +19,8 @@ pipeline {
         DBT_SNOWFLAKE_WAREHOUSE = 'DEV_DATA_WAREHOUSE'
         PRE_COMMIT_HOME = """${pwd(tmp: true)}"""
 
+        GIT_CREDENTIALS_ID = 'git-user'
+
         EMAIL_RECIPIENTS = """dev@somecompany.com"""
         EMAIL_SUBJECT = """${env.JOB_NAME} build #${env.BUILD_NUMBER}"""
     }
@@ -76,7 +78,7 @@ pipeline {
 
                         cd $DBT_HOME
                         export DBT_DATABASE=JENKINS_DW_DATABASE_"$CHANGE_ID"
-                        
+
                         dbt --no-write-json run-operation create_db --args "{db_name: $DBT_DATABASE}"
 
                         dbt --no-write-json run-operation manage_masking_policies
@@ -139,7 +141,7 @@ pipeline {
                     sh label: "Create release database", script: '''
                         # Create release database *****
                         export DBT_DATABASE=JENKINS_DW_DATABASE_"$CHANGE_ID"
-                   
+
                         dbt --no-write-json run-operation create_db --args "{db_name: $DBT_DATABASE}"
 
                         dbt --no-write-json run-operation manage_masking_policies
@@ -190,7 +192,7 @@ pipeline {
                         # Install dbt packages *****
                         export DBT_DATABASE=PROD_DW_DATABASE
                         echo $DBT_DATABASE
-                                                
+
                         cd $DBT_HOME
 
                         dbt deps
@@ -215,7 +217,7 @@ pipeline {
                         dbt docs generate
                     '''
                 }
-                withCredentials([usernamePassword(credentialsId: 'sourcecode-bitbucket', passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
+                withCredentials([usernamePassword(credentialsId: "${GIT_CREDENTIALS_ID}", passwordVariable: 'GIT_PASSWORD', usernameVariable: 'GIT_USER')]) {
                     sh label: "Update dbt docs", script: '''
                         # Update dbt docs *****
                         rm .pre-commit-config.yaml
