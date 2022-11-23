@@ -126,3 +126,9 @@ dbt `Jenkinsfile` pipeline without requiring:
     -   You can make changes to the repo on the host, then commit those changes and click "Build Now" to run another build. You don't need to "git push", because Jenkins is pulling the code directly from the host.
     -   You can make changes to the Build Pipeline by clicking "Configure". This will display the same screen you used earlier when creating the build pipeline.
     -   To view the nicer "Blue Ocean" pipeline output, click on the Open Blue Ocean link.
+
+# Credit
+
+These instructions were initially based on javabeangrinder's response to
+a [question](https://stackoverflow.com/questions/36309063/how-can-i-test-a-change-made-to-jenkinsfile-locally)
+on Stack Overflow. Really great technical writing!
